@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">PulseTime</string>
+    <string name="tile_label">PulseTime</string>
+    <string name="complication_label">Next pulse</string>
+</resources>
