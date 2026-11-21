@@ -12,12 +12,30 @@ android {
         applicationId = "com.pulsetime"
         minSdk = 30          // Wear OS 3+
         targetSdk = 34       // Wear OS 5
-        versionCode = 1
+        // CI passes VERSION_CODE (the workflow run number) so every Play upload is unique.
+        versionCode = System.getenv("VERSION_CODE")?.toIntOrNull() ?: 1
         versionName = "1.0.0"
+    }
+
+    // Upload key for Google Play, supplied by CI secrets. Without them the
+    // release build is produced unsigned.
+    val keystorePath = System.getenv("SIGNING_KEYSTORE_PATH")
+    signingConfigs {
+        if (keystorePath != null) {
+            create("release") {
+                storeFile = file(keystorePath)
+                storePassword = System.getenv("SIGNING_STORE_PASSWORD")
+                keyAlias = System.getenv("SIGNING_KEY_ALIAS")
+                keyPassword = System.getenv("SIGNING_KEY_PASSWORD")
+            }
+        }
     }
 
     buildTypes {
         release {
+            if (keystorePath != null) {
+                signingConfig = signingConfigs.getByName("release")
+            }
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(
